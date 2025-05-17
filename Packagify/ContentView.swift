@@ -91,8 +91,58 @@ struct ContentView: View {
                 }
             }
             .onOpenURL { url in
-                let (_, files) = handleDroppedFiles([url])
-                droppedFiles = files
+                guard url.scheme?.lowercased() == "packagify" else {
+                    let (_, files) = handleDroppedFiles([url])
+                    droppedFiles = files
+                    return
+                }
+
+                guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                      let host = components.host else {
+                    print("Invalid packagify URL")
+                    return
+                }
+
+                func extractFileURL(from components: URLComponents) -> URL? {
+                    if let path = components.queryItems?.first(where: { $0.name == "path" })?.value {
+                        return URL(fileURLWithPath: path)
+                    } else if let urlString = components.queryItems?.first(where: { $0.name == "url" })?.value,
+                              let fullURL = URL(string: urlString) {
+                        return fullURL
+                    }
+                    return nil
+                }
+
+                switch host {
+// Usage (Path): packagify://folder?path=/path/to/folder
+//           or: packagify://file?path=/path/to/file.swift
+// Usage (fileURL): packagify://folder?url=file:///path/to/folder
+//              or: packagify://file?url=/file:///path/to/file.swift
+                case "folder", "file":
+                    if let fileURL = extractFileURL(from: components) {
+                        let (_, files) = handleDroppedFiles([fileURL])
+                        droppedFiles = files
+                    } else {
+                        showAlert("Failed to Import from URL Scheme", description: "Missing 'path' or 'url' parameter", style: .critical)
+                    }
+// Usage: packagify://newFile
+                case "newFile":
+                    do {
+                        let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("Source.swift", conformingTo: .data)
+                        let fileData = String("import Foundation\n")
+                        try fileData.data(using: .utf8)!.write(to: fileURL)
+                        let (_, files) = handleDroppedFiles([fileURL])
+                        droppedFiles = files
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                default:
+                    if host.isEmpty {
+                        print("Opened by URL Scheme")
+                    } else {
+                        showAlert("URL Scheme Error", description: "\"\(host)\" is not a valid URL path.", style: .critical)
+                    }
+                }
             }
         }
     }
@@ -113,6 +163,7 @@ struct ContentView: View {
             }
             return (true, droppedFiles)
         } catch {
+            showAlert("Error Processing Files", description: error.localizedDescription)
             print(error.localizedDescription)
             return (false, [])
         }
@@ -239,4 +290,14 @@ func getSwiftFiles(from folderURL: URL) throws -> [SwiftFile] {
 
 #Preview {
     ContentView()
+}
+
+func showAlert(_ title: String, description: String, style: NSAlert.Style? = .informational) {
+    let alert = NSAlert()
+    alert.messageText = title
+    alert.informativeText = description
+
+    alert.addButton(withTitle: "OK")
+    alert.alertStyle = style!
+    alert.runModal()
 }
