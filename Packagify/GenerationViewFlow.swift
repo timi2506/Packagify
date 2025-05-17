@@ -19,6 +19,24 @@ struct SelectFilesView: View {
                 List {
                     if files.isEmpty {
                         Text("No Swift Files were found, please select a Different Folder or Swift Files")
+                    } else {
+                        if selectedFiles.count == files.count {
+                            Button("Deselect All") {
+                                selectedFiles = []
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(Color.accentColor)
+                        } else {
+                            Button("Select All") {
+                                for file in files {
+                                    if !selectedFiles.contains(file) {
+                                        selectedFiles.insert(file)
+                                    }
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(Color.accentColor)
+                        }
                     }
                     ForEach(files) { file in
                         HStack {
