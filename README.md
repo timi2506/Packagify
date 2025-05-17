@@ -18,7 +18,7 @@ Packagify Comes with 3 URL Schemes, you can also use "packagify://" without any 
 ### folder
 Opens Packagify and imports the Folder passed
 
-**Usage: **
+**Usage:**
  
 by folderPath: packagify://folder?path=/path/to/folder
  
@@ -27,7 +27,7 @@ by folderURL: packagify://folder?url=file:///path/to/folder
 ### file
 Opens Packagify and imports the File passed
 
-**Usage: **
+**Usage:**
 
 by filePath: packagify://folder?path=/path/to/file.swift
 
@@ -36,7 +36,7 @@ by fileURL: packagify://folder?url=file:///path/to/file.swift
 ### newFile
 Opens Packagify and Starts with an Empty File
 
-**Usage: **
+**Usage:**
 
 packagify://newFile
 
