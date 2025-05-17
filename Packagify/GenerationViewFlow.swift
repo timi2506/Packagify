@@ -160,16 +160,19 @@ struct PackageInfoView: View {
                     versionField("watchOS Version", cgFloatBinding: $watchOSVersion)
                 }
                 VStack(alignment: .leading) {
-                    TextField("Swift Tools Version", text: Binding(get: {
-                        "\(packageInfo.swiftToolsVersion ?? 6.0)"
-                    }, set: { newValue in
-                        if newValue.isEmpty {
-                            packageInfo.swiftToolsVersion = nil
-                        } else {
-                            packageInfo.swiftToolsVersion = extractNumber(from: newValue, swiftVersion: true)
-                        }
-                    }))
-                    .textFieldStyle(.plain)
+                    HStack {
+                        Text("Swift Tools Version")
+                        TextField("Swift Tools Version", text: Binding(get: {
+                            "\(packageInfo.swiftToolsVersion ?? 6.0)"
+                        }, set: { newValue in
+                            if newValue.isEmpty {
+                                packageInfo.swiftToolsVersion = nil
+                            } else {
+                                packageInfo.swiftToolsVersion = extractNumber(from: newValue, swiftVersion: true)
+                            }
+                        }))
+                        .textFieldStyle(.plain)
+                    }
                     Text("For Example use Version 6.0 to use macOS 15")
                         .font(.caption)
                         .foregroundStyle(.gray)
