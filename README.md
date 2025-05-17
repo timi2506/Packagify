@@ -1,4 +1,4 @@
-<img width="684" alt="Screenshot 2025-05-17 at 11 28 06" src="https://github.com/user-attachments/assets/04f90b59-6bc5-460f-a6b0-f95032c575d6" />
+<img width="684" alt="Screenshot of Packagify 1.0.0" src="https://github.com/user-attachments/assets/cba85f20-f937-49d0-b377-f3ab030e9103" />
 
 # Packagify
 
