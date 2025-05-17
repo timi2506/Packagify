@@ -85,6 +85,7 @@ struct PackageInfo {
     var name: String
     var files: [SwiftFile]
     var supportedPlaforms: [Platforms]
+    var swiftToolsVersion: CGFloat? = 6.0
 }
 
 struct PackageInfoView: View {
@@ -158,6 +159,21 @@ struct PackageInfoView: View {
                 if watchOS {
                     versionField("watchOS Version", cgFloatBinding: $watchOSVersion)
                 }
+                VStack(alignment: .leading) {
+                    TextField("Swift Tools Version", text: Binding(get: {
+                        "\(packageInfo.swiftToolsVersion ?? 6.0)"
+                    }, set: { newValue in
+                        if newValue.isEmpty {
+                            packageInfo.swiftToolsVersion = nil
+                        } else {
+                            packageInfo.swiftToolsVersion = extractNumber(from: newValue, swiftVersion: true)
+                        }
+                    }))
+                    .textFieldStyle(.plain)
+                    Text("For Example use Version 6.0 to use macOS 15")
+                        .font(.caption)
+                        .foregroundStyle(.gray)
+                }
             }
             .cornerRadius(15)
             HStack {
@@ -214,9 +230,14 @@ struct PackageInfoView: View {
                 .textFieldStyle(.plain)
         }
     }
-    func extractNumber(from string: String) -> CGFloat? {
+    func extractNumber(from string: String, swiftVersion: Bool? = nil) -> CGFloat? {
+        let defaultNumber: CGFloat? = (swiftVersion ?? false) ? PackageGenerator.shared.swiftToolsVersionTrimmed : 15.0
         let filtered = string.filter { "0123456789.".contains($0) }
-        return CGFloat(Double(filtered) ?? 0)
+        if let double = Double(filtered) {
+            return CGFloat(double)
+        } else {
+            return defaultNumber
+        }
     }
 
     var supportedPlatformStates: [Bool] {
