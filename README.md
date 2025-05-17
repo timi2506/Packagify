@@ -13,7 +13,7 @@ Packagify provides a simple way to create Swift Packages, you can either drop in
 [Here](https://github.com/timi2506/Packagify/releases/latest)
 
 ## URL Scheme
-Packagify Comes with 3 URL Schemes, you can also use "packagify://" without any subpath to just open the App
+Packagify Comes with 3 URL Schemes, you can also use "[packagify://](packagify://)" without any subpath to just open the App
 
 ### folder
 Opens Packagify and imports the Folder passed
